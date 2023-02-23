@@ -1,4 +1,4 @@
-package com.example;
+package com.discordgroupbanknotifications;
 
 import com.google.inject.Provides;
 import javax.inject.Inject;
@@ -11,43 +11,36 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.DrawManager;
+import okhttp3.OkHttpClient;
 
 @Slf4j
 @PluginDescriptor(
-	name = "Example"
+	name = "Discord Group Bank Notifications"
 )
-public class ExamplePlugin extends Plugin
+public class DiscordGroupBankNotificationsPlugin extends Plugin
 {
 	@Inject
 	private Client client;
 
 	@Inject
-	private ExampleConfig config;
+	private DiscordGroupBankNotificationsConfig config;
 
 	@Override
 	protected void startUp() throws Exception
 	{
-		log.info("Example started!");
+		log.info("Discord Group Bank Notifications started!");
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
-		log.info("Example stopped!");
-	}
-
-	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged)
-	{
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
-		{
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Example says " + config.greeting(), null);
-		}
+		log.info("Discord Group Bank Notifications stopped!");
 	}
 
 	@Provides
-	ExampleConfig provideConfig(ConfigManager configManager)
+	DiscordGroupBankNotificationsConfig provideConfig(ConfigManager configManager)
 	{
-		return configManager.getConfig(ExampleConfig.class);
+		return configManager.getConfig(DiscordGroupBankNotificationsConfig.class);
 	}
 }
