@@ -11,7 +11,7 @@ In order to use this plugin you will need to create a discordWebhook on your dis
 ![image](https://user-images.githubusercontent.com/13265450/109745517-9b42ef80-7b99-11eb-82f9-63f8ea590e8c.png)
 
 ## Contribution
-Contains code snippets from:
+Contains code snippets from:  
 https://github.com/christoabrown/group-ironmen-tracker
 https://github.com/cepawiel/RuneLite-Discord-Notifications
 https://github.com/BossHuso/discord-rare-drop-notificater
