@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id 'jacoco'
 }
 
 repositories {
@@ -27,6 +28,15 @@ dependencies {
 group = 'com.discordgroupbanknotifications'
 version = '1.0'
 sourceCompatibility = '1.8'
+
+jacocoTestReport {
+	reports {
+		xml.enabled true
+		html.enabled false
+	}
+}
+
+check.dependsOn jacocoTestReport
 
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
