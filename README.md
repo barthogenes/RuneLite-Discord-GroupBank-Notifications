@@ -1,4 +1,5 @@
 # Discord Group Bank Notifications
+[![codecov](https://codecov.io/gh/barthogenes/RuneLite-Discord-GroupBank-Notifications/branch/master/graph/badge.svg?token=AZHZE4D5X4)](https://codecov.io/gh/barthogenes/RuneLite-Discord-GroupBank-Notifications)  
 This is a RuneLite plugin which sends a message to your Discord channel when you deposit or withdraw items from the Group Bank.
 
 ![example](example.png)
