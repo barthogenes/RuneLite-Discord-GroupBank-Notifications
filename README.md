@@ -1,5 +1,5 @@
 # Discord Group Bank Notifications
-This is a plugin for RuneLite which sends a message to your discord channel when you or one of your Group Iron Man members deposits or withdraws items from the Group Bank.
+This is a plugin for RuneLite which sends a message to your discord channel when you deposit or withdraw items from the Group Bank.
 
 ![example](example.png)
 
