@@ -16,42 +16,42 @@ public class TransferMessageCreatorTest {
             new Object[]{
                 "Wise Old Man",
                 new ItemTransfer(1, "Abyssal whip", 1),
-                "**Wise Old Man** deposited **1** Abyssal whip to the Group Bank."
+                "**Wise Old Man** deposited **1 Abyssal whip** to the Group Bank."
             },
             new Object[]{
                 "Wise Old Man",
                 new ItemTransfer(1, "Abyssal whip", 99999),
-                "**Wise Old Man** deposited **99999** Abyssal whips to the Group Bank."
+                "**Wise Old Man** deposited **99999 Abyssal whips** to the Group Bank."
             },
             new Object[]{
                 "Wise Old Man",
                 new ItemTransfer(1, "Abyssal whip", 100000),
-                "**Wise Old Man** deposited **100K** Abyssal whips to the Group Bank."
+                "**Wise Old Man** deposited **100K Abyssal whips** to the Group Bank."
             },
             new Object[]{
                 "Wise Old Man",
                 new ItemTransfer(1, "Abyssal whip", -1),
-                "**Wise Old Man** withdrew **1** Abyssal whip from the Group Bank."
+                "**Wise Old Man** withdrew **1 Abyssal whip** from the Group Bank."
             },
             new Object[]{
                 "Wise Old Man",
                 new ItemTransfer(1, "Coins", -1),
-                "**Wise Old Man** withdrew **1** Coin from the Group Bank."
+                "**Wise Old Man** withdrew **1 Coin** from the Group Bank."
             },
             new Object[]{
                 "Wise Old Man",
                 new ItemTransfer(1, "Abyssal whip", -9999999),
-                "**Wise Old Man** withdrew **9999K** Abyssal whips from the Group Bank."
+                "**Wise Old Man** withdrew **9999K Abyssal whips** from the Group Bank."
             },
             new Object[]{
                 "Wise Old Man",
                 new ItemTransfer(1, "Abyssal whip", -10000000),
-                "**Wise Old Man** withdrew **10M** Abyssal whips from the Group Bank."
+                "**Wise Old Man** withdrew **10M Abyssal whips** from the Group Bank."
             },
             new Object[]{
                 "Wise Old Man",
                 new ItemTransfer(1, "Abyssal whip", -5),
-                "**Wise Old Man** withdrew **5** Abyssal whips from the Group Bank."
+                "**Wise Old Man** withdrew **5 Abyssal whips** from the Group Bank."
             }
         };
     }
