@@ -14,6 +14,7 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import okhttp3.OkHttpClient;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,6 +35,8 @@ public class DiscordGroupBankNotificationsPlugin extends Plugin
 	private ItemManager itemManager;
 	@Inject
 	private TransferMessageCreator transferMessageCreator;
+	@Inject
+	private ApiTool apiTool;
 
 	private static final int OPEN_SHARED_STORAGE = 786440;
 	private static final int SAVE_SHARED_STORAGE = 47448098;
@@ -125,7 +128,7 @@ public class DiscordGroupBankNotificationsPlugin extends Plugin
 				.collect(Collectors.toList());
 
 		String jsonStr = GSON.toJson(discordWebhook);
-		webhookUrls.forEach(url -> ApiTool.getInstance().postRaw(url, jsonStr, "application/json")
+		webhookUrls.forEach(url -> apiTool.postRaw(url, jsonStr, "application/json")
 			.handle((_v, e) ->
 			{
 				if (e != null)

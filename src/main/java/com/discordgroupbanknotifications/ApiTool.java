@@ -1,29 +1,15 @@
 package com.discordgroupbanknotifications;
 
-import net.runelite.client.RuneLite;
 import okhttp3.*;
 
-import java.io.File;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 public class ApiTool
 {
-    private static ApiTool _instance;
-
-    private OkHttpClient httpClient = null;
-
-    public static ApiTool getInstance()
-    {
-        if (_instance == null)
-        {
-            _instance = new ApiTool();
-            _instance.httpClient = new OkHttpClient.Builder()
-                    .cache(new Cache(new File(RuneLite.CACHE_DIR, "okhttp_drdn"), 20 * 1024 * 1024)) // 20mb cache
-                    .build();
-        }
-        return _instance;
-    }
+    @Inject
+    private OkHttpClient httpClient;
 
     public CompletableFuture<ResponseBody> postRaw(String url, String data, String type)
     {
