@@ -72,14 +72,6 @@ public class DiscordGroupBankNotificationsPlugin extends Plugin
 		}
 	}
 
-	public Item[] mapItems(Item[] items) {
-		return (Item[]) Arrays.stream(items).map(i -> new Item(
-				itemManager.canonicalize(i.getId()),
-				itemManager.getItemComposition(i.getId()).getMembersName(),
-				i.getQuantity()
-		)).toArray();
-	}
-
 	@Subscribe
 	private void onItemContainerChanged(ItemContainerChanged event) {
 		final int id = event.getContainerId();
@@ -103,7 +95,6 @@ public class DiscordGroupBankNotificationsPlugin extends Plugin
 
 		final int param1 = event.getParam1();
 		final MenuAction menuAction = event.getMenuAction();
-
 		if (menuAction != MenuAction.CC_OP)
 			return;
 
@@ -113,15 +104,34 @@ public class DiscordGroupBankNotificationsPlugin extends Plugin
 		}
 		else if (param1 == SAVE_SHARED_STORAGE || param1 == BACK_TO_BANK_SHARED_STORAGE || param1 == CLOSE_SHARED_STORAGE)
 		{
-			if (modifiedSharedBankItems != null)
-			{
-				List<ItemTransfer> itemTransfers = initialSharedBankItems.getItemTransfers(modifiedSharedBankItems);
-				sendWebhook(transferMessageCreator.createTransferMessages(itemTransfers, client.getLocalPlayer().getName()));
+			if (modifiedSharedBankItems == null)
+				return;
 
-				modifiedSharedBankItems = null;
-				initialSharedBankItems = null;
-			}
+			List<ItemTransfer> itemTransfers = initialSharedBankItems.getItemTransfers(modifiedSharedBankItems);
+			sendWebhook(transferMessageCreator.createTransferMessages(itemTransfers, client.getLocalPlayer().getName()));
+
+			modifiedSharedBankItems = null;
+			initialSharedBankItems = null;
 		}
+	}
+
+	private void sendWebhook(DiscordWebhook discordWebhook) {
+		String configUrl = config.webhook();
+		if (Strings.isNullOrEmpty(configUrl)) { return; }
+
+		List<String> webhookUrls = Arrays.stream(configUrl.split("\n"))
+				.filter(u -> u.length() > 0)
+				.map(String::trim)
+				.collect(Collectors.toList());
+
+		String jsonStr = GSON.toJson(discordWebhook);
+		webhookUrls.forEach(url -> ApiTool.getInstance().postRaw(url, jsonStr, "application/json")
+			.handle((_v, e) ->
+			{
+				if (e != null)
+					log.error(e.getMessage());
+				return null;
+			}));
 	}
 
 	private boolean isEnabled() {
@@ -145,26 +155,6 @@ public class DiscordGroupBankNotificationsPlugin extends Plugin
 
 		return true;
 	}
-
-	private void sendWebhook(DiscordWebhook discordWebhook) {
-		String configUrl = config.webhook();
-		if (Strings.isNullOrEmpty(configUrl)) { return; }
-
-		List<String> webhookUrls = Arrays.stream(configUrl.split("\n"))
-				.filter(u -> u.length() > 0)
-				.map(String::trim)
-				.collect(Collectors.toList());
-
-		String jsonStr = GSON.toJson(discordWebhook);
-		webhookUrls.forEach(url -> ApiTool.getInstance().postRaw(url, jsonStr, "application/json")
-			.handle((_v, e) ->
-			{
-				if (e != null)
-					log.error(e.getMessage());
-				return null;
-			}));
-	}
-
 
 	@Provides
 	DiscordGroupBankNotificationsConfig provideConfig(ConfigManager configManager)
