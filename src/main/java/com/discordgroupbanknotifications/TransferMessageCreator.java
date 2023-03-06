@@ -28,9 +28,9 @@ public class TransferMessageCreator {
         String itemNameMultiple = !itemName.endsWith("s") ? itemName + "s" : itemName;
         String itemNameSingleOrMultiple = quantity.equals("1") ? itemNameSingle : itemNameMultiple;
         if (quantityChange > 0) {
-            msg = String.format("**%s** deposited **%s** %s to the Group Bank.", playerName, quantity, itemNameSingleOrMultiple);
+            msg = String.format("**%s** deposited **%s %s** to the Group Bank.", playerName, quantity, itemNameSingleOrMultiple);
         } else {
-            msg = String.format("**%s** withdrew **%s** %s from the Group Bank.", playerName, quantity, itemNameSingleOrMultiple);
+            msg = String.format("**%s** withdrew **%s %s** from the Group Bank.", playerName, quantity, itemNameSingleOrMultiple);
         }
         return msg;
     }
