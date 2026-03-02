@@ -38,8 +38,8 @@ public class DiscordGroupBankNotificationsPlugin extends Plugin
 	@Inject
 	private ApiTool apiTool;
 
-	private static final int OPEN_SHARED_STORAGE = 786440;
-	private static final int SAVE_SHARED_STORAGE = 47448098;
+	private static final int OPEN_SHARED_STORAGE = 24772680;
+	private static final int SAVE_SHARED_STORAGE = 47448091;
 	private static final int BACK_TO_BANK_SHARED_STORAGE = 47448073;
 	private static final int CLOSE_SHARED_STORAGE = 47448067;
 
