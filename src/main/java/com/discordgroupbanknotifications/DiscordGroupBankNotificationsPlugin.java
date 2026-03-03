@@ -6,7 +6,6 @@ import com.google.inject.Provides;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
-import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.client.config.ConfigManager;
@@ -14,7 +13,6 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import okhttp3.OkHttpClient;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,7 +41,6 @@ public class DiscordGroupBankNotificationsPlugin extends Plugin
 	private static final int BACK_TO_BANK_SHARED_STORAGE = 47448073;
 	private static final int CLOSE_SHARED_STORAGE = 47448067;
 
-	private boolean fetchInitialSharedBankItems = false;
 	private ItemMap initialSharedBankItems = null;
 	private ItemMap modifiedSharedBankItems = null;
 
@@ -58,31 +55,30 @@ public class DiscordGroupBankNotificationsPlugin extends Plugin
 	protected void shutDown() throws Exception
 	{
 		log.info("Discord Group Bank Notifications stopped!");
+		initialSharedBankItems = null;
+		modifiedSharedBankItems = null;
 		super.shutDown();
 	}
 
 	@Subscribe
-	public void onGameTick(GameTick gameTick) {
-		if (!isEnabled())
+	private void onItemContainerChanged(ItemContainerChanged event)
+	{
+		if (event.getContainerId() != InventoryID.GROUP_STORAGE.getId())
 			return;
 
-		if (fetchInitialSharedBankItems) {
-			ItemContainer container = client.getItemContainer(InventoryID.GROUP_STORAGE);
-			if (container != null) {
-				initialSharedBankItems = new ItemMap(mapItems(container.getItems()));
-				fetchInitialSharedBankItems = false;
-			}
-		}
-	}
-
-	@Subscribe
-	private void onItemContainerChanged(ItemContainerChanged event) {
-		final int id = event.getContainerId();
 		ItemContainer container = event.getItemContainer();
+		if (container == null)
+			return;
 
-		if (id == InventoryID.GROUP_STORAGE.getId()) {
-			modifiedSharedBankItems = new ItemMap(mapItems(container.getItems()));
+		ItemMap snapshot = new ItemMap(mapItems(container.getItems()));
+
+		if (initialSharedBankItems == null)
+		{
+			initialSharedBankItems = snapshot;
+			return;
 		}
+
+		modifiedSharedBankItems = snapshot;
 	}
 
 	private Item[] mapItems(net.runelite.api.Item[] items) {
@@ -103,18 +99,48 @@ public class DiscordGroupBankNotificationsPlugin extends Plugin
 
 		if (param1 == OPEN_SHARED_STORAGE)
 		{
-			fetchInitialSharedBankItems = true;
-		}
-		else if (param1 == SAVE_SHARED_STORAGE || param1 == BACK_TO_BANK_SHARED_STORAGE || param1 == CLOSE_SHARED_STORAGE)
-		{
-			if (modifiedSharedBankItems == null)
-				return;
-
-			List<ItemTransfer> itemTransfers = initialSharedBankItems.getItemTransfers(modifiedSharedBankItems);
-			sendWebhook(transferMessageCreator.createTransferMessages(itemTransfers, client.getLocalPlayer().getName()));
-
-			modifiedSharedBankItems = null;
 			initialSharedBankItems = null;
+			modifiedSharedBankItems = null;
+		}
+		else if (param1 == SAVE_SHARED_STORAGE
+				|| param1 == BACK_TO_BANK_SHARED_STORAGE
+				|| param1 == CLOSE_SHARED_STORAGE)
+		{
+			if (initialSharedBankItems == null || modifiedSharedBankItems == null)
+			{
+				log.debug("Skipping webhook — no valid snapshot");
+				initialSharedBankItems = null;
+				modifiedSharedBankItems = null;
+				return;
+			}
+
+			List<ItemTransfer> itemTransfers =
+					initialSharedBankItems.getItemTransfers(modifiedSharedBankItems);
+
+			if (itemTransfers == null || itemTransfers.isEmpty())
+			{
+				initialSharedBankItems = null;
+				modifiedSharedBankItems = null;
+				return;
+			}
+
+			Player player = client.getLocalPlayer();
+			if (player == null)
+			{
+				initialSharedBankItems = null;
+				modifiedSharedBankItems = null;
+				return;
+			}
+
+			sendWebhook(
+					transferMessageCreator.createTransferMessages(
+							itemTransfers,
+							player.getName()
+					)
+			);
+
+			initialSharedBankItems = null;
+			modifiedSharedBankItems = null;
 		}
 	}
 
