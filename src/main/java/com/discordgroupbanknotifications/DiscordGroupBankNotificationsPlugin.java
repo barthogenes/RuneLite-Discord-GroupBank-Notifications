@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.discordgroupbanknotifications;
+package com.discordgroupbanknotifications;
 
 import com.google.common.base.Strings;
 import com.google.inject.Provides;
